@@ -413,34 +413,43 @@ class AndroidPatcher(BasePlatformPatcher):
             click.secho('An error may have occurred while extracting the APK.', fg='red')
             click.secho(o.err, fg='red')
 
-    def inject_internet_permission(self):
+    def inject_permissions(self):
         """
             Checks the status of the source APK to see if it
-            has the INTERNET permission. If not, the manifest file
+            has permissions. If not, the manifest file
             is parsed and the permission injected.
 
             :return:
         """
 
         internet_permission = 'android.permission.INTERNET'
+        overlay_permission = 'android.permission.SYSTEM_ALERT_WINDOW'
 
-        # if the app already has the internet permission, easy mode :D
-        if internet_permission in self._get_appt_output():
-            click.secho('App already has android.permission.INTERNET', fg='green')
+        # if the app already has permissions, easy mode :D
+        have_internet = internet_permission in self._get_appt_output()
+        have_overlay = overlay_permission in self._get_appt_output()
+        if have_internet == True and have_overlay == True:
+            click.secho('App already has permissions', fg='green')
             return
-
+            
         # if not, we need to inject an element with it
-        click.secho('App does not have android.permission.INTERNET, attempting to patch the AndroidManifest.xml...',
+        click.secho('App does not have permissions, attempting to patch the AndroidManifest.xml...',
                     dim=True, fg='yellow')
         xml = self._get_android_manifest()
         root = xml.getroot()
 
-        click.secho('Injecting permission: {0}'.format(internet_permission), fg='green')
-
-        # prepare a new 'uses-permission' tag
-        child = ElementTree.Element('uses-permission')
-        child.set('android:name', internet_permission)
-        root.append(child)
+        click.secho('Injecting permissions...', fg='green')
+        
+        if not have_internet:
+            internet = ElementTree.Element('uses-permission')
+            internet.set('android:name', internet_permission)
+            root.append(internet)
+            click.secho('Internet permission added', fg='green')
+        if not have_overlay:
+            overlay = ElementTree.Element('uses-permission')
+            overlay.set('android:name', overlay_permission)
+            root.append(overlay)
+            click.secho('Overlay permission added', fg='green')
 
         click.secho('Writing new Android manifest...', dim=True)
 

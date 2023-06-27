@@ -413,7 +413,7 @@ class AndroidPatcher(BasePlatformPatcher):
             click.secho('An error may have occurred while extracting the APK.', fg='red')
             click.secho(o.err, fg='red')
 
-    def inject_permissions(self):
+    def inject_internet_permission(self):
         """
             Checks the status of the source APK to see if it
             has permissions. If not, the manifest file

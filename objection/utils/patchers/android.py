@@ -406,7 +406,9 @@ class AndroidPatcher(BasePlatformPatcher):
             '-r' if self.skip_resources else '',
             '-o',
             self.apk_temp_directory,
-            self.apk_source
+            self.apk_source,
+            '-Djdk.util.zip.disableZip64ExtraFieldValidation=true',
+            '-Djdk.nio.zipfs.allowDotZipEntry=true'
         ]), timeout=self.command_run_timeout)
 
         if len(o.err) > 0:

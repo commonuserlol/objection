@@ -407,6 +407,7 @@ class AndroidPatcher(BasePlatformPatcher):
             '-o',
             self.apk_temp_directory,
             self.apk_source,
+            '--',
             '-Djdk.util.zip.disableZip64ExtraFieldValidation=true',
             '-Djdk.nio.zipfs.allowDotZipEntry=true'
         ]), timeout=self.command_run_timeout)
